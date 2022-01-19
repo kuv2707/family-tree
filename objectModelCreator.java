@@ -44,6 +44,7 @@ class objectModelCreator
             //search for what is asked
             //like   children of <Node name>
         }
+        in.close();
     }
     public static void main(String[] args) {
         try
