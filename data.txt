@@ -12,7 +12,7 @@
     }
     .uncle2+.aunt2
     {
-        .cousin4+.cindrella
+        .cousin4+.cindrella*kool cindrella is bahu*
         {
             .nephew1;
             .nephew2+.rapunzel

@@ -28,21 +28,51 @@ class objectModelCreator
                 }
             }
         }
-        System.out.println("input data="+document);
+        //System.out.println("input data="+document);
         Node root=new Node("__root__");
-        System.out.println("Indexing tree");
+        System.out.println("Creating document object model...");
         root.scanChildren();
         root.print("");
+        //for(Node n:nodes)
+        //n.print();
         Scanner in=new Scanner(System.in);
         while(true)
         {
             String n=in.nextLine();
             if(n.equals("X"))
             {
+                System.out.println("Program terminated");
                 break;
             }
-            //search for what is asked
-            //like   children of <Node name>
+            char func=n.charAt(0);
+            String name=n.substring(2,n.length()-1);
+            switch(func)
+            {
+                case '$':
+                {
+                    //only print that named node's immediate children
+                    Node result=root.search(name);
+                    if(result==null)
+                    System.out.println("No such node found");
+                    else
+                    result.print();
+                    break;
+                }
+                case '*':
+                {
+                    //only print that named node's immediate children
+                    Node result=root.search(name);
+                    if(result==null)
+                    System.out.println("No such node found");
+                    else
+                    result.print("");
+                    break;
+                }
+                default:
+                {
+                    System.out.println("Unknown method: "+func);
+                }
+            }
         }
         in.close();
     }
@@ -62,8 +92,8 @@ class objectModelCreator
     }
     static class Node
     {
-        String name;
-        String spouse;
+        String name="";
+        String spouse="";
         ArrayList<Node> parentlist=new ArrayList<Node>();//no need for a list of parents though
         ArrayList<Node> childlist=new ArrayList<Node>();
         public Node(String name)
@@ -148,17 +178,13 @@ class objectModelCreator
             }
 
         }
-        public void print(String tab)
+        public void print(String tab)//also prints grandchildren nodes
         {
-            //tabs+="    ";
-            
             if(childlist.size()>0)
             {
                 System.out.println(tab+"<"+getNameWithSpouse()+">");
-                //System.out.print(tabs+"{\n");
                 for(Node n:childlist)
                 {
-                    //tabs+="    ";
                     n.print(tab+tabs);
                 }
                 System.out.println(tab+"</"+getName()+">");
@@ -167,13 +193,39 @@ class objectModelCreator
             {
                 System.out.println(tab+"<"+getNameWithSpouse()+">");
             }
-            //log("\n");
-            //tabs=tabs.substring(4,tabs.length());
-            
         }
-        public void print()
+        public void print()//does not print grandchildren nodes
         {
-            print("");
+            if(childlist.size()>0)
+            {
+                System.out.println("<"+getNameWithSpouse()+">");
+                for(Node n:childlist)
+                {
+                    System.out.print(tabs+n.getNameWithSpouse());
+                    if(n.childlist.size()>0)
+                    System.out.println("...");
+                    else
+                    System.out.println();
+                }
+                System.out.println("</"+getName()+">");
+            }
+            else
+            {
+                System.out.println("<"+getNameWithSpouse()+">");
+            }
+        }
+        public Node search(String name)
+        {
+            if(this.name.equals(name)  || this.spouse.equals(name))
+            return this;
+            Node b;
+            for(Node n:childlist)
+            {
+                b=n.search(name);
+                if(b!=null)
+                return b;
+            }
+            return null;
         }
     }
 }
