@@ -1,0 +1,32 @@
+.grandfather+.grandmother
+{
+    *there are 3 children of these*
+    .uncle1+.aunt1
+    {
+        .cousin1;
+        .cousin2
+        {
+            *no child*
+        }
+        .cousin3;
+    }
+    .uncle2+.aunt2
+    {
+        .cousin4+.cindrella
+        {
+            .nephew1;
+            .nephew2+.rapunzel
+            {
+                .pota
+                {
+                    .parpota+.cardi
+                    {
+                        .cardiDaughter;
+                    }
+                }
+            }
+        }
+    }
+    .uncle3;
+
+}
