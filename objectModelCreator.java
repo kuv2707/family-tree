@@ -4,12 +4,13 @@ class objectModelCreator
 {
     static String document="";
     static int index=0;
-    static ArrayList<Node> nodes=new ArrayList<Node>();
+    static int  maxDepth=0;
+    //static ArrayList<Node> nodes=new ArrayList<Node>();
     static String tabs="    ";
     public static void parse() throws Exception
     {
         float init=System.nanoTime();
-        FileReader fr=new FileReader(new File("data.txt"));
+        FileReader fr=new FileReader(new File("sourceData.txt"));
         BufferedReader br=new BufferedReader(fr);
         String s="";
         boolean ignore=false;
@@ -30,10 +31,10 @@ class objectModelCreator
             }
         }
         fr.close();
-        Node root=new Node("$root");
+        Node root=new Node("$root",-1);
         System.out.println("Creating document object model...");
         
-        root.scanChildren();
+        root.scanChildren(0);
         
         root.print("");
         float f=System.nanoTime();
@@ -71,9 +72,14 @@ class objectModelCreator
                     result.print("");
                     break;
                 }
+                case '>':
+                {
+                    //find generation gap between two nodes (difference in depth)
+                }
                 default:
                 {
                     System.out.println("Unknown method: "+func);
+                    break;
                 }
             }
         }
@@ -97,10 +103,12 @@ class objectModelCreator
     {
         String name="";
         String spouse="";
+        int depth=0;
         ArrayList<Node> parentlist=new ArrayList<Node>();//no need for a list of parents though
         ArrayList<Node> childlist=new ArrayList<Node>();
-        public Node(String name)
+        public Node(String name,int dept)
         {
+            depth=dept;
             if(name.contains("+"))
             {
                 int k=name.indexOf("+");
@@ -131,7 +139,7 @@ class objectModelCreator
         public Node getParent()
         {
             
-            return parentlist.size()==0?new Node(""):parentlist.get(0);//for now 0th index
+            return parentlist.size()==0?null:parentlist.get(0);//for now 0th index
         }
         public String readName()
         {
@@ -144,26 +152,27 @@ class objectModelCreator
             }
             return nam;
         }
-        public void scanChildren()
+        public void scanChildren(int depth)
         {
             while(index<document.length())
             {
-                //log(""+document.charAt(index));
                 switch (document.charAt(index)) 
                 {
                     case '.':
                     {
-                        //log("found a .");
-                        Node n=new Node(readName());
+                        Node n=new Node(readName(),depth);
                         childlist.add(n);
+
                         n.parentlist.add(this);
-                        nodes.add(n);
+                        //nodes.add(n);
                         if(document.charAt(index)=='{')
                         {
-                            n.scanChildren();
+                            index++;
+                            n.scanChildren(depth+1);
                         }
                         if(document.charAt(index)==';')
                         {
+                            index++;
                             continue;
                         }
                         break;
@@ -174,7 +183,7 @@ class objectModelCreator
                     }  
                     default:
                     {
-                        //System.out.println("unexpected token "+document.charAt(index));
+                        System.out.println("unexpected token "+document.charAt(index));
                         break;
                     }
                 }
@@ -184,19 +193,21 @@ class objectModelCreator
         }
         public void print(String tab)//also prints grandchildren nodes
         {
+            System.out.println(tab+"<"+getNameWithSpouse()+">");
             if(childlist.size()>0)
             {
-                System.out.println(tab+"<"+getNameWithSpouse()+">");
+                
                 for(Node n:childlist)
                 {
                     n.print(tab+tabs);
                 }
-                System.out.println(tab+"</"+getName()+">");
+                //System.out.println(tab+"</"+getName()+">");
             }
             else
             {
-                System.out.println(tab+"<"+getNameWithSpouse()+">");
+                
             }
+            System.out.println(tab+"</"+depth+" "+getName()+">");
         }
         public void print()//does not print grandchildren nodes
         {
