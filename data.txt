@@ -1,8 +1,13 @@
+*names have to be preceeded by a dot(.) and terminated by a semicolor(;) or scope start({)*
+* properties of a person are to be defined as follows:     @property-name:"property value";*
+
+
 .grandfather+.grandmother
 {
     *there are 3 children of these*
     .uncle1+.aunt1
     {
+        
         .cousin1;
         .cousin2
         {

@@ -30,12 +30,12 @@ class objectModelCreator
             }
         }
         fr.close();
-        Node root=new Node("//root");
+        Node root=new Node("$root");
         System.out.println("Creating document object model...");
         
         root.scanChildren();
         
-        //root.print("");
+        root.print("");
         float f=System.nanoTime();
         System.out.println((f-init)/Math.pow(10,9)+" time took");
         Scanner in=new Scanner(System.in);
@@ -130,7 +130,8 @@ class objectModelCreator
         }
         public Node getParent()
         {
-            return parentlist.get(0);//for now 0th index
+            
+            return parentlist.size()==0?new Node(""):parentlist.get(0);//for now 0th index
         }
         public String readName()
         {
