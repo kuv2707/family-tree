@@ -8,6 +8,7 @@ class objectModelCreator
     static String tabs="    ";
     public static void parse() throws Exception
     {
+        float init=System.nanoTime();
         FileReader fr=new FileReader(new File("data.txt"));
         BufferedReader br=new BufferedReader(fr);
         String s="";
@@ -28,13 +29,15 @@ class objectModelCreator
                 }
             }
         }
-        //System.out.println("input data="+document);
-        Node root=new Node("__root__");
+        fr.close();
+        Node root=new Node("//root");
         System.out.println("Creating document object model...");
+        
         root.scanChildren();
-        root.print("");
-        //for(Node n:nodes)
-        //n.print();
+        
+        //root.print("");
+        float f=System.nanoTime();
+        System.out.println((f-init)/Math.pow(10,9)+" time took");
         Scanner in=new Scanner(System.in);
         while(true)
         {
