@@ -7,7 +7,8 @@
     *there are 3 children of these*
     .uncle1+.aunt1
     {
-        
+        @age=21;
+        @hobbies=[cooking,dancing];
         .cousin1;
         .cousin2
         {

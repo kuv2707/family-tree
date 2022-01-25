@@ -6,7 +6,7 @@ class objectModelCreator
     static int index=0;
     static int  maxDepth=0;
     //static ArrayList<Node> nodes=new ArrayList<Node>();
-    static String tabs="    ";
+    static String tabs="   ";
     public static void parse() throws Exception
     {
         float init=System.nanoTime();
@@ -47,6 +47,11 @@ class objectModelCreator
             {
                 System.out.println("Program terminated");
                 break;
+            }
+            if(n.length()==0)
+            {
+                System.out.println("Empty command");
+                continue;
             }
             char func=n.charAt(0);
             String name=n.substring(2,n.length()-1);
@@ -106,6 +111,7 @@ class objectModelCreator
         int depth=0;
         ArrayList<Node> parentlist=new ArrayList<Node>();//no need for a list of parents though
         ArrayList<Node> childlist=new ArrayList<Node>();
+        HashMap<String,String> properties=new HashMap<String,String>();
         public Node(String name,int dept)
         {
             depth=dept;
@@ -177,6 +183,24 @@ class objectModelCreator
                         }
                         break;
                     }    
+                    case '@':
+                    {
+                        index++;
+                        String key="",value="";
+                        while(document.charAt((index))!='=')
+                        {
+                            key+=document.charAt(index);
+                            index++;
+                        }
+                        index++;
+                        while(document.charAt(index)!=';')
+                        {
+                            value+=document.charAt(index);
+                            index++;
+                        }
+                        properties.put(key,value);
+                        break;
+                    }
                     case '}':
                     {
                         return;
@@ -193,7 +217,8 @@ class objectModelCreator
         }
         public void print(String tab)//also prints grandchildren nodes
         {
-            System.out.println(tab+"<"+getNameWithSpouse()+">");
+            System.out.print(tab+"<"+getNameWithSpouse());
+            System.out.println(" "+properties.entrySet().toString().replace("=",":")+">");
             if(childlist.size()>0)
             {
                 
@@ -203,17 +228,15 @@ class objectModelCreator
                 }
                 //System.out.println(tab+"</"+getName()+">");
             }
-            else
-            {
-                
-            }
+            
             System.out.println(tab+"</"+depth+" "+getName()+">");
         }
         public void print()//does not print grandchildren nodes
         {
             if(childlist.size()>0)
             {
-                System.out.println("<"+getNameWithSpouse()+">");
+                System.out.print("<"+getNameWithSpouse());
+                System.out.println(" "+properties.entrySet().toString().replace("=",":")+">");
                 for(Node n:childlist)
                 {
                     System.out.print(tabs+n.getNameWithSpouse());
@@ -222,6 +245,7 @@ class objectModelCreator
                     else
                     System.out.println();
                 }
+                
                 System.out.println("</"+getName()+">");
             }
             else
