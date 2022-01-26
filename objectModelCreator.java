@@ -252,7 +252,7 @@ class objectModelCreator
             if(childlist.size()>0)
             {
                 System.out.println("<"+getNameWithSpouse()+">");
-                for(Map.Entry s:properties.entrySet())
+                for(Map.Entry<String,String> s:properties.entrySet())
                 {
                     System.out.println(tabs+"*)"+s.getKey()+":"+s.getValue());
                 }
@@ -298,7 +298,7 @@ class objectModelCreator
             }
             if(inp.equals("*"))
             {
-                for(Map.Entry s:n.properties.entrySet())
+                for(Map.Entry<String,String> s:n.properties.entrySet())
                 {
                     System.out.println(tabs+"*)"+s.getKey()+":"+s.getValue());
                 }
