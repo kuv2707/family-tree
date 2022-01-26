@@ -5,14 +5,15 @@ class objectModelCreator
     static String document="";
     static int index=0;
     static int  maxDepth=0;
-    //static ArrayList<Node> nodes=new ArrayList<Node>();
-    static String tabs="   ";
+    static String tabs="    ";
+    static Scanner in=new Scanner(System.in);
     public static void parse() throws Exception
     {
-        float init=System.nanoTime();
+        
         FileReader fr=new FileReader(new File("sourceData.txt"));
         BufferedReader br=new BufferedReader(fr);
         String s="";
+        float init=System.nanoTime();
         boolean ignore=false;
         while((s=br.readLine())!=null)
         {
@@ -33,17 +34,16 @@ class objectModelCreator
         fr.close();
         Node root=new Node("$root",-1);
         System.out.println("Creating document object model...");
-        
         root.scanChildren(0);
-        
         root.print("");
         float f=System.nanoTime();
         System.out.println((f-init)/Math.pow(10,9)+" time took");
-        Scanner in=new Scanner(System.in);
+        
         while(true)
         {
+            System.out.print(">");
             String n=in.nextLine();
-            if(n.equals("X"))
+            if(n.toUpperCase().equals("X"))
             {
                 System.out.println("Program terminated");
                 break;
@@ -80,6 +80,22 @@ class objectModelCreator
                 case '>':
                 {
                     //find generation gap between two nodes (difference in depth)
+                }
+                case '#'://select a node
+                {
+                    Node select=root.search(name);
+                    if(select==null)
+                    {
+                        System.out.println("No such node found");
+                        break;
+                    }
+                    else
+                    {
+                        System.out.println(select.getName()+" is now the selected node");
+                        
+                    }
+                    context(select);
+                    break;
                 }
                 default:
                 {
@@ -135,7 +151,7 @@ class objectModelCreator
                 if(spouse.equals(""))
                 return name;
                 else
-                return name+" spouse: "+spouse;
+                return name+","+spouse;
             }
         }
         public String getName()
@@ -235,8 +251,11 @@ class objectModelCreator
         {
             if(childlist.size()>0)
             {
-                System.out.print("<"+getNameWithSpouse());
-                System.out.println(" "+properties.entrySet().toString().replace("=",":")+">");
+                System.out.println("<"+getNameWithSpouse()+">");
+                for(Map.Entry s:properties.entrySet())
+                {
+                    System.out.println(tabs+"*)"+s.getKey()+":"+s.getValue());
+                }
                 for(Node n:childlist)
                 {
                     System.out.print(tabs+n.getNameWithSpouse());
@@ -265,6 +284,27 @@ class objectModelCreator
                 return b;
             }
             return null;
+        }
+    }
+    public static void context(Node n)
+    {
+        while(true)
+        {
+            String inp=in.nextLine();
+            if(inp.toUpperCase().equals("X"))
+            {
+                System.out.println(tabs+"Unselecting "+n.getName());
+                return;
+            }
+            if(inp.equals("*"))
+            {
+                for(Map.Entry s:n.properties.entrySet())
+                {
+                    System.out.println(tabs+"*)"+s.getKey()+":"+s.getValue());
+                }
+                
+            }
+            System.out.println(tabs+n.properties.get(inp));
         }
     }
 }
