@@ -6,6 +6,4 @@ comment2.params=args
 comment2.target=void\ main(java.lang.String[])
 comment3.params=s
 comment3.target=void\ log(java.lang.String)
-comment4.params=n
-comment4.target=void\ context(objectModelCreator.Node)
-numComments=5
+numComments=4

@@ -35,75 +35,11 @@ class objectModelCreator
         Node root=new Node("$root",-1);
         System.out.println("Creating document object model...");
         root.scanChildren(0);
-        root.print("");
+        //root.print("");
         float f=System.nanoTime();
         System.out.println((f-init)/Math.pow(10,9)+" time took");
-        
-        while(true)
-        {
-            System.out.print(">");
-            String n=in.nextLine();
-            if(n.toUpperCase().equals("X"))
-            {
-                System.out.println("Program terminated");
-                break;
-            }
-            if(n.length()==0)
-            {
-                System.out.println("Empty command");
-                continue;
-            }
-            char func=n.charAt(0);
-            String name=n.substring(2,n.length()-1);
-            switch(func)
-            {
-                case '$':
-                {
-                    //only print that named node's immediate children
-                    Node result=root.search(name);
-                    if(result==null)
-                    System.out.println("No such node found");
-                    else
-                    result.print();
-                    break;
-                }
-                case '*':
-                {
-                    //only print that named node's immediate children
-                    Node result=root.search(name);
-                    if(result==null)
-                    System.out.println("No such node found");
-                    else
-                    result.print("");
-                    break;
-                }
-                case '>':
-                {
-                    //find generation gap between two nodes (difference in depth)
-                }
-                case '#'://select a node
-                {
-                    Node select=root.search(name);
-                    if(select==null)
-                    {
-                        System.out.println("No such node found");
-                        break;
-                    }
-                    else
-                    {
-                        System.out.println(select.getName()+" is now the selected node");
-                        
-                    }
-                    context(select);
-                    break;
-                }
-                default:
-                {
-                    System.out.println("Unknown method: "+func);
-                    break;
-                }
-            }
-        }
+        root.menu("");
+        System.out.println("Program terminated");
         in.close();
     }
     public static void main(String[] args) {
@@ -285,26 +221,102 @@ class objectModelCreator
             }
             return null;
         }
-    }
-    public static void context(Node n)
-    {
-        while(true)
+        public void menu(String spc)
         {
-            String inp=in.nextLine();
-            if(inp.toUpperCase().equals("X"))
+            /**
+             * All available functions:
+             * $(node):   print the entire tree from the node passed as argument 
+             * *(node):   print the properties and immediate children of the node passed as argument
+             * #(node):   enteres the menu for the node passed as argument
+             * @:         prints the current node's properties
+             * X:         Return from current node. If no parent, exit the program
+             * 
+             * any other input will be treated as an individual properties of the current node
+             * 
+             * to make:
+             * method to get only children
+             * make depth a property
+             * print only immediate children rather than entire tree (as $(node) does)
+             */
+            while(true)
             {
-                System.out.println(tabs+"Unselecting "+n.getName());
-                return;
-            }
-            if(inp.equals("*"))
-            {
-                for(Map.Entry<String,String> s:n.properties.entrySet())
-                {
-                    System.out.println(tabs+"*)"+s.getKey()+":"+s.getValue());
-                }
+                System.out.print(spc+">");
+                String n=in.nextLine();
                 
+                if(n.length()==0)
+                {
+                    System.out.println(spc+"Current node:");
+                    print(spc);
+                    continue;
+                }
+                char func=n.charAt(0);
+                
+                switch(func)
+                {
+                    case '$'://global print all nodes method
+                    {
+                        //only print that named node's immediate children
+                        String name=n.substring(2,n.length()-1);
+                        Node result=search(name);
+                        if(result==null)
+                        System.out.println(spc+"No such node found");
+                        else
+                        result.print();
+                        break;
+                    }
+                    case '*':
+                    {
+                        //only print that named node's immediate children
+                        String name=n.substring(2,n.length()-1);
+                        Node result=search(name);
+                        if(result==null)
+                        System.out.println(spc+"No such node found");
+                        else
+                        result.print(spc+"");
+                        break;
+                    }
+                    case '#'://select a node
+                    {
+                        String name=n.substring(2,n.length()-1);
+                        Node select=search(name);
+                        if(select==null)
+                        {
+                            System.out.println(spc+"No such node found");
+                            break;
+                        }
+                        else
+                        {
+                            System.out.println(spc+select.getName()+" is now the selected node");
+                            
+                        }
+                        select.menu(spc+tabs);
+                        break;
+                    }
+                    case '@':
+                    {
+                        if(properties.size()==0)
+                        {
+                            System.out.println(spc+"This node has no property");
+                            break;
+                        }
+                        for(Map.Entry<String,String> s:properties.entrySet())
+                        {
+                            System.out.println(spc+"@)"+s.getKey()+":"+s.getValue());
+                        }
+                        break;
+                    }
+                    case 'X':
+                    {
+                        System.out.println(spc+"Unselecting "+getName());
+                        return;
+                    }
+                    default:
+                    {
+                        System.out.println(spc+properties.get(n));
+                        break;
+                    }
+                }
             }
-            System.out.println(tabs+n.properties.get(inp));
         }
     }
 }
