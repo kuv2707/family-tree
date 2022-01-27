@@ -289,7 +289,7 @@ class objectModelCreator
                             System.out.println(spc+select.getName()+" is now the selected node");
                             
                         }
-                        select.menu(spc+tabs);
+                        select.menu(spc+tabs);//instead of just one spc, there should be that number of spcs as is the depth of this node from current node
                         break;
                     }
                     case '@':
