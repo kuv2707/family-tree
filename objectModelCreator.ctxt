@@ -1,5 +1,6 @@
 #BlueJ class context
 comment0.target=objectModelCreator
+comment0.text=\r\n\ method\ to\ print\ current\ node\r\n
 comment1.params=
 comment1.target=void\ parse()
 comment2.params=args

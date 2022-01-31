@@ -1,5 +1,8 @@
 import java.io.*;
 import java.util.*;
+/**
+ * method to print current node
+ */
 class objectModelCreator
 {
     static String document="";
@@ -10,7 +13,7 @@ class objectModelCreator
     public static void parse() throws Exception
     {
         
-        FileReader fr=new FileReader(new File("sourceData.txt"));
+        FileReader fr=new FileReader(new File("sourceData.kuv"));
         BufferedReader br=new BufferedReader(fr);
         String s="";
         float init=System.nanoTime();
@@ -19,7 +22,7 @@ class objectModelCreator
         {
             for(int i=0;i<s.length();i++)
             {
-                if(s.charAt(i)!=' '  &&  s.charAt(i)!='\n')
+                if((s.charAt(i)!=' '  &&  s.charAt(i)!='\n')  || true)//dont omit space and newline
                 {
                     if(s.charAt(i)=='*')
                     {
@@ -32,13 +35,13 @@ class objectModelCreator
             }
         }
         fr.close();
-        Node root=new Node("$root",-1);
+        Node root=new Node("root",-1);
         System.out.println("Creating document object model...");
         root.scanChildren(0);
         //root.print("");
         float f=System.nanoTime();
         System.out.println((f-init)/Math.pow(10,9)+" time took");
-        root.menu("");
+        root.menu("");//user is already directed inside root node
         System.out.println("Program terminated");
         in.close();
     }
@@ -59,7 +62,7 @@ class objectModelCreator
     static class Node
     {
         String name="";
-        String spouse="";
+        String spouse="none";
         int depth=0;
         ArrayList<Node> parentlist=new ArrayList<Node>();//no need for a list of parents though
         ArrayList<Node> childlist=new ArrayList<Node>();
@@ -67,6 +70,8 @@ class objectModelCreator
         public Node(String name,int dept)
         {
             depth=dept;
+            properties.put("depth",""+depth);
+            name=name.trim();
             if(name.contains("+"))
             {
                 int k=name.indexOf("+");
@@ -78,17 +83,10 @@ class objectModelCreator
         }
         public String getNameWithSpouse()
         {
-            if(spouse==null)
-            {
+            if(spouse.equals("none"))
                 return name;
-            }
             else
-            {
-                if(spouse.equals(""))
-                return name;
-                else
                 return name+","+spouse;
-            }
         }
         public String getName()
         {
@@ -103,7 +101,7 @@ class objectModelCreator
         {
             index++;
             String nam="";
-            while(document.charAt(index)!='{'  && document.charAt(index)!=';')
+            while(document.charAt(index)!='{'  && document.charAt(index)!=';' && document.charAt(index)!='\n')
             {
                 nam+=document.charAt(index);
                 index++;
@@ -117,96 +115,103 @@ class objectModelCreator
                 switch (document.charAt(index)) 
                 {
                     case '.':
-                    {
-                        Node n=new Node(readName(),depth);
-                        childlist.add(n);
-
-                        n.parentlist.add(this);
-                        //nodes.add(n);
-                        if(document.charAt(index)=='{')
+                        {
+                            Node n=new Node(readName(),depth);
+                            childlist.add(n);
+    
+                            n.parentlist.add(this);
+                            //nodes.add(n);
+                            if(document.charAt(index)=='{')
+                            {
+                                index++;
+                                n.scanChildren(depth+1);
+                            }
+                            if(document.charAt(index)==';')
+                            {
+                                index++;
+                                continue;
+                            }
+                            break;
+                        }    
+                    case '@':
                         {
                             index++;
-                            n.scanChildren(depth+1);
+                            String key="",value="";
+                            while(document.charAt((index))!=':')
+                            {
+                                key+=document.charAt(index);
+                                index++;
+                            }
+                            index++;
+                            while(document.charAt(index)!=';')
+                            {
+                                value+=document.charAt(index);
+                                index++;
+                            }
+                            properties.put(key,value);
+                            break;
                         }
-                        if(document.charAt(index)==';')
+                    case '}':
+                        {
+                            return;
+                        }  
+                    case ' ':
                         {
                             index++;
                             continue;
                         }
-                        break;
-                    }    
-                    case '@':
-                    {
-                        index++;
-                        String key="",value="";
-                        while(document.charAt((index))!='=')
+                    case '\n':
                         {
-                            key+=document.charAt(index);
                             index++;
+                            continue;
                         }
-                        index++;
-                        while(document.charAt(index)!=';')
-                        {
-                            value+=document.charAt(index);
-                            index++;
-                        }
-                        properties.put(key,value);
-                        break;
-                    }
-                    case '}':
-                    {
-                        return;
-                    }  
                     default:
-                    {
-                        System.out.println("unexpected token "+document.charAt(index));
-                        break;
-                    }
+                        {
+                            System.out.println("unexpected token "+document.charAt(index));
+                            break;
+                        }
                 }
                 index++;
             }
 
         }
-        public void print(String tab)//also prints grandchildren nodes
+        public void print(boolean grandchildren,String space)//does not print grandchildren nodes
         {
-            System.out.print(tab+"<"+getNameWithSpouse());
-            System.out.println(" "+properties.entrySet().toString().replace("=",":")+">");
-            if(childlist.size()>0)
+            if(grandchildren)
             {
-                
-                for(Node n:childlist)
+                System.out.println(space+"<"+getNameWithSpouse()+">");
+                if(childlist.size()>0)
                 {
-                    n.print(tab+tabs);
+                    
+                    for(Node n:childlist)
+                    {
+                        n.print(true,space+tabs);
+                    }
+                    //System.out.println(tab+"</"+getName()+">");
                 }
-                //System.out.println(tab+"</"+getName()+">");
-            }
-            
-            System.out.println(tab+"</"+depth+" "+getName()+">");
-        }
-        public void print()//does not print grandchildren nodes
-        {
-            if(childlist.size()>0)
-            {
-                System.out.println("<"+getNameWithSpouse()+">");
-                for(Map.Entry<String,String> s:properties.entrySet())
-                {
-                    System.out.println(tabs+"*)"+s.getKey()+":"+s.getValue());
-                }
-                for(Node n:childlist)
-                {
-                    System.out.print(tabs+n.getNameWithSpouse());
-                    if(n.childlist.size()>0)
-                    System.out.println("...");
-                    else
-                    System.out.println();
-                }
-                
-                System.out.println("</"+getName()+">");
             }
             else
             {
-                System.out.println("<"+getNameWithSpouse()+">");
+                if(childlist.size()>0)
+                {
+                    System.out.println(space+"<"+getNameWithSpouse()+">");
+                    for(Map.Entry<String,String> s:properties.entrySet())
+                    {
+                        System.out.println(space+"*)"+s.getKey()+":"+s.getValue());
+                    }
+                    for(Node n:childlist)
+                    {
+                        System.out.print(space+n.getNameWithSpouse());
+                        if(n.childlist.size()>0)
+                        System.out.println("...");
+                        else
+                        System.out.println();
+                    }
+                    
+                    
+                }
             }
+            System.out.println(space+"</"+getNameWithSpouse()+">");
         }
         public Node search(String name)
         {
@@ -245,8 +250,6 @@ class objectModelCreator
                 
                 if(n.length()==0)
                 {
-                    System.out.println(spc+"Current node:");
-                    print(spc);
                     continue;
                 }
                 char func=n.charAt(0);
@@ -257,31 +260,42 @@ class objectModelCreator
                     {
                         //only print that named node's immediate children
                         String name=n.substring(2,n.length()-1);
+                        if(name.equals(""))
+                        name=this.getName();
                         Node result=search(name);
                         if(result==null)
                         System.out.println(spc+"No such node found");
                         else
-                        result.print();
+                        result.print(false,spc);
                         break;
                     }
                     case '*':
                     {
                         //only print that named node's immediate children
                         String name=n.substring(2,n.length()-1);
+                        if(name.equals(""))
+                        name=this.getName();
                         Node result=search(name);
                         if(result==null)
                         System.out.println(spc+"No such node found");
                         else
-                        result.print(spc+"");
+                        result.print(true,spc);
                         break;
                     }
                     case '#'://select a node
                     {
-                        String name=n.substring(2,n.length()-1);
-                        Node select=search(name);
+                        String nam=n.substring(2,n.length()-1);
+                        Node select=search(nam);
                         if(select==null)
                         {
-                            System.out.println(spc+"No such node found");
+                            if(nam.equals(this.getName()))
+                            {
+                                System.out.println(spc+"You are already in "+nam);
+                            }
+                            else
+                            {
+                                System.out.println(spc+"No such node found");
+                            }
                             break;
                         }
                         else
@@ -289,7 +303,12 @@ class objectModelCreator
                             System.out.println(spc+select.getName()+" is now the selected node");
                             
                         }
-                        select.menu(spc+tabs);//instead of just one spc, there should be that number of spcs as is the depth of this node from current node
+                        String y="";
+                        for(int i=0;i<select.depth-depth-1;i++)
+                        {
+                            y+=tabs;
+                        }
+                        select.menu(y);//instead of just one spc, there should be that number of spcs as is the depth of this node from current node
                         break;
                     }
                     case '@':
