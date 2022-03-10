@@ -12,7 +12,6 @@ class objectModelCreator
     static Scanner in=new Scanner(System.in);
     public static void parse() throws Exception
     {
-        
         FileReader fr=new FileReader(new File("sourceData.kuv"));
         BufferedReader br=new BufferedReader(fr);
         String s="";
@@ -22,23 +21,19 @@ class objectModelCreator
         {
             for(int i=0;i<s.length();i++)
             {
-                if((s.charAt(i)!=' '  &&  s.charAt(i)!='\n')  || true)//dont omit space and newline
+                if(s.charAt(i)=='*')
                 {
-                    if(s.charAt(i)=='*')
-                    {
-                        ignore=!ignore;
-                        continue;
-                    }
-                    if(!ignore)
-                    document+=s.charAt(i);
+                    ignore=!ignore;
+                    continue;
                 }
+                if(!ignore)
+                document+=s.charAt(i);
             }
         }
         fr.close();
-        Node root=new Node("root",-1);
+        Node root=new Node("root",0);
         System.out.println("Creating document object model...");
         root.scanChildren(0);
-        //root.print("");
         float f=System.nanoTime();
         System.out.println((f-init)/Math.pow(10,9)+" time took");
         root.menu("");//user is already directed inside root node
@@ -77,6 +72,7 @@ class objectModelCreator
                 int k=name.indexOf("+");
                 this.name=name.substring(0,k);
                 this.spouse=name.substring(k+2);
+                properties.put("spouse",this.spouse);
             }
             else
             this.name=name;
@@ -120,7 +116,6 @@ class objectModelCreator
                             childlist.add(n);
     
                             n.parentlist.add(this);
-                            //nodes.add(n);
                             if(document.charAt(index)=='{')
                             {
                                 index++;
@@ -165,9 +160,14 @@ class objectModelCreator
                             index++;
                             continue;
                         }
+                    case '\u0009':
+                        {
+                            index++;
+                            continue;
+                        }
                     default:
                         {
-                            System.out.println("unexpected token "+document.charAt(index));
+                            System.out.println("unexpected token "+(int)document.charAt(index));
                             break;
                         }
                 }
@@ -175,40 +175,38 @@ class objectModelCreator
             }
 
         }
-        public void print(boolean grandchildren,String space)//does not print grandchildren nodes
+        public void print(boolean grandchildren,boolean printproperties,String space)
         {
+            System.out.println(space+"<"+getNameWithSpouse()+">");
             if(grandchildren)
             {
-                System.out.println(space+"<"+getNameWithSpouse()+">");
-                if(childlist.size()>0)
+                
+                if(printproperties)
                 {
-                    
-                    for(Node n:childlist)
-                    {
-                        n.print(true,space+tabs);
-                    }
-                    //System.out.println(tab+"</"+getName()+">");
-                }
-            }
-            else
-            {
-                if(childlist.size()>0)
-                {
-                    System.out.println(space+"<"+getNameWithSpouse()+">");
                     for(Map.Entry<String,String> s:properties.entrySet())
                     {
                         System.out.println(space+"*)"+s.getKey()+":"+s.getValue());
                     }
-                    for(Node n:childlist)
-                    {
-                        System.out.print(space+n.getNameWithSpouse());
-                        if(n.childlist.size()>0)
-                        System.out.println("...");
-                        else
-                        System.out.println();
-                    }
-                    
-                    
+                }
+                for(Node n:childlist)
+                {
+                    n.print(true,true,space+tabs);
+                }
+            }
+            else
+            {
+                
+                for(Map.Entry<String,String> s:properties.entrySet())
+                {
+                    System.out.println(space+"*)"+s.getKey()+":"+s.getValue());
+                }
+                for(Node n:childlist)
+                {
+                    System.out.print(space+n.getNameWithSpouse());
+                    if(n.childlist.size()>0)
+                    System.out.println("...");
+                    else
+                    System.out.println();
                 }
             }
             System.out.println(space+"</"+getNameWithSpouse()+">");
@@ -230,67 +228,71 @@ class objectModelCreator
         {
             /**
              * All available functions:
-             * $(node):   print the entire tree from the node passed as argument 
-             * *(node):   print the properties and immediate children of the node passed as argument
-             * #(node):   enteres the menu for the node passed as argument
-             * @:         prints the current node's properties
-             * X:         Return from current node. If no parent, exit the program
+             * *(node):   print the entire tree from the node passed as argument 
+             * $(node):   print the properties and immediate children of the node passed as argument
+             * #(node):   enters the menu for the node passed as argument
+             * @      :   prints the current node's properties
+             * &      :   prints the current node's children
+             * X      :   Return from current node. If no parent, exit the program
              * 
-             * any other input will be treated as an individual properties of the current node
+             * any other input will be treated as an individual property of the current node
+             * passing no arguments to a function accepting arguments will result in the current node being automatically passed to it
              * 
              * to make:
              * method to get only children
-             * make depth a property
              * print only immediate children rather than entire tree (as $(node) does)
              */
             while(true)
             {
                 System.out.print(spc+">");
                 String n=in.nextLine();
-                
                 if(n.length()==0)
                 {
                     continue;
                 }
                 char func=n.charAt(0);
-                
+                String nombre=this.getName();
+                try
+                {
+                    nombre=n.substring(2,n.length()-1);
+                        if(nombre.equals(""))
+                        nombre=this.getName();
+                }
+                catch(Exception e)
+                {
+                    //the function called does not take arguments
+                }
                 switch(func)
                 {
                     case '$'://global print all nodes method
                     {
                         //only print that named node's immediate children
-                        String name=n.substring(2,n.length()-1);
-                        if(name.equals(""))
-                        name=this.getName();
-                        Node result=search(name);
+                        
+                        Node result=search(nombre);
                         if(result==null)
                         System.out.println(spc+"No such node found");
                         else
-                        result.print(false,spc);
+                        result.print(false,true,spc);
                         break;
                     }
                     case '*':
                     {
                         //only print that named node's immediate children
-                        String name=n.substring(2,n.length()-1);
-                        if(name.equals(""))
-                        name=this.getName();
-                        Node result=search(name);
+                        Node result=search(nombre);
                         if(result==null)
                         System.out.println(spc+"No such node found");
                         else
-                        result.print(true,spc);
+                        result.print(true,true,spc);
                         break;
                     }
                     case '#'://select a node
                     {
-                        String nam=n.substring(2,n.length()-1);
-                        Node select=search(nam);
+                        Node select=search(nombre);
                         if(select==null)
                         {
-                            if(nam.equals(this.getName()))
+                            if(nombre.equals(this.getName()))
                             {
-                                System.out.println(spc+"You are already in "+nam);
+                                System.out.println(spc+"You are already in "+nombre);
                             }
                             else
                             {
@@ -304,7 +306,7 @@ class objectModelCreator
                             
                         }
                         String y="";
-                        for(int i=0;i<select.depth-depth-1;i++)
+                        for(int i=0;i<select.depth-depth;i++)
                         {
                             y+=tabs;
                         }
@@ -328,6 +330,11 @@ class objectModelCreator
                     {
                         System.out.println(spc+"Unselecting "+getName());
                         return;
+                    }
+                    case '!':
+                    {
+                        main(null);
+                        System.exit(0);
                     }
                     default:
                     {

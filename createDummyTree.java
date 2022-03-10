@@ -2,7 +2,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Random;
-
 public class createDummyTree 
 {
     static Random random=new Random();

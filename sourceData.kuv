@@ -30,7 +30,14 @@
                     @color:whyte;
                     .parpota+.cardi
                     {
-                        .cardiDaughter;
+                        *cardi se shaadi*
+		@job:theff;
+		@z:last;
+		.cardiDaughter
+	      {
+		@swag:babi sark;
+		@money:vari moch;
+	      }
                     }
                 }
             }
@@ -46,6 +53,7 @@
                 .random
                 {
                     *no child yet*
+	    @attitude:all_time_high;
                 }
             }
         }
