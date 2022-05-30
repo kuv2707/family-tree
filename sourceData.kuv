@@ -1,6 +1,7 @@
 *names have to be preceeded by a dot(.) and terminated by a semicolor(;) or scope start({)*
-* properties of a person are to be defined as follows:     @property-name:"property value";*
+* properties of a person are to be defined as follows:     @property-name:property value;         *
 *spaces not supported in names and properties*
+**
 @name:kodhiya royal familie;
 .grandfather+.grandmother
 {
@@ -20,7 +21,7 @@
     }
     .uncle2+.aunt2
     {
-        .cousin4+.cindrella*kool cindrella is bahu*
+        .cousin4+.cindrella*kool cindrella is wyf*
         {
             .nephew1;
             .nephew2+.rapunzel
@@ -33,7 +34,7 @@
                         *cardi se shaadi*
 		@job:theff;
 		@z:last;
-		.cardiDaughter
+		.cardiDottir
 	      {
 		@swag:babi sark;
 		@money:vari moch;

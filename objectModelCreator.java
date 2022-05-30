@@ -9,6 +9,7 @@ class objectModelCreator
     static int index=0;
     static int  maxDepth=0;
     static String tabs="    ";
+    static HashMap<String,String> globalVariables=new HashMap<String,String>();
     static Scanner in=new Scanner(System.in);
     public static void parse() throws Exception
     {

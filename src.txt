@@ -1,0 +1,16 @@
+node grandparent
+{
+    def age=67;
+    node parent
+    {
+        def color=blue;
+    }
+    node uncle1
+    {
+        def income=1 chawanni;
+    }
+}
+node gp2
+{
+    def what=this is how;
+}
