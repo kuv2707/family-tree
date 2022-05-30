@@ -3,7 +3,7 @@ class Node
 {
     final String ONETAB="\t";
     ArrayList<Node> childList=new ArrayList<Node>();
-    HashMap<String,String> instanceVariables=new HashMap<String,String>();
+    HashMap<String,Object> instanceVariables=new HashMap<String,Object>();
     String name;
     Node conjugate;
     int generation;
@@ -30,15 +30,30 @@ class Node
     }
     public void deepPrint(String space)
     {
-        System.out.println(space+"<"+getName()+">");
-        for(Map.Entry<String,String> s:instanceVariables.entrySet())
+        System.out.print(space+"<"+getName());
+        for(Map.Entry<String,Object> s:instanceVariables.entrySet())
         {
-            System.out.println(space+"*)"+s.getKey()+":"+s.getValue());
+            System.out.print("\n"+space+" "+s.getKey()+":"+s.getValue());
         }
+        System.out.println(">");
         for(Node n:childList)
         {
             n.deepPrint(space+ONETAB);
         }
         System.out.println(space+"</"+getName()+">");
+    }
+    public String getVariable(String key)
+    {
+        String val=instanceVariables.get(key).toString();
+        if(val==null)
+        {
+            if(immediateParent!=null)
+            val=immediateParent.getVariable(key);
+        }
+        return val;
+    }
+    public void menu()
+    {
+        
     }
 }
