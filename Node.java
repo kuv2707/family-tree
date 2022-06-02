@@ -1,7 +1,7 @@
 import java.util.*;
 class Node
 {
-    final String ONETAB="    ";
+    static final String ONETAB="    ";
     ArrayList<Node> childList=new ArrayList<Node>();
     HashMap<String,Object> instanceVariables=new HashMap<String,Object>();
     String name;
@@ -49,7 +49,6 @@ class Node
     }
     Node searchChild(String name)
     {
-        Node current=this;
         for(Node n:childList)
         {
             if(n.getName().equals(name))

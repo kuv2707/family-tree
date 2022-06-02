@@ -99,4 +99,63 @@ class treeCreator
         }
         return null;
     }
+    String readJSON(String nam)
+    {
+        String out="";
+        try(FileReader fr=new FileReader(nam+".json"))
+        {
+            BufferedReader br=new BufferedReader(fr);
+            String s="";
+            while((s=br.readLine())!=null)
+            {
+                out+=s+"\n";
+            }
+        }
+        catch(Exception e){}
+        return out;
+    }
+    void makeJSON(Node start,String name)
+    {
+        try(FileWriter fw=new FileWriter(name+".json");)
+        {
+            BufferedWriter bw=new BufferedWriter(fw);
+            PrintWriter pw=new PrintWriter(bw);
+            pw.println("{");
+            json(root,"",pw);
+            pw.print("\n}");
+            pw.flush();
+            System.out.println("File created with name "+name+".json");
+        }
+        catch(Exception e)
+        {
+            System.out.println("File creation failed "+e.getMessage());
+        }
+    }
+    static final String DQ="\"",ONETAB="    ";
+    private void json(Node n,String space,PrintWriter p)
+    {
+        p.print(space+DQ+n.getName()+DQ+":\n");
+        p.print(space+"{\n");
+        
+        int k=0;
+        for(Map.Entry<String,Object> s:n.instanceVariables.entrySet())
+        {
+            k++;
+            if(k!=n.instanceVariables.size())
+            p.println(space+ONETAB+DQ+s.getKey()+DQ+":"+DQ+s.getValue()+DQ+",");
+            else
+            p.println(space+ONETAB+DQ+s.getKey()+DQ+":"+DQ+s.getValue()+DQ);
+
+        }
+        if(n.childList.size()!=0  &&  k!=0)
+        p.println(space+ONETAB+",");
+        for(int i=0;i<n.childList.size();i++)
+        {
+            json(n.childList.get(i),space+ONETAB,p);
+            if(i!=n.childList.size()-1)
+            p.println(space+ONETAB+",");
+        }
+        p.println("\n"+space+"}");
+        
+    }
 }

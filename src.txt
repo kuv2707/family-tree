@@ -1,6 +1,7 @@
 node grandparent
 {
     def age=67;
+    def illness=greed;
     node parent
     {
         def color=blue;

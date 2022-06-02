@@ -5,13 +5,12 @@ public class driver {
     {
         treeCreator tc=new treeCreator("src.txt");
         tc.root.deepPrint("");
-        //tc.log(tc.allNodes.toString());
         Scanner in=new Scanner(System.in);
         tc.root.menu("",in);
-        //Node k=tc.root.searchChild("cousin");
-        //System.out.println(k.getVariable("grandparent.parent.color"));
-        //Node p=k.searchInParents("grandparent");
-        //System.out.println(p);
+        
+        //tc.makeJSON(tc.root,"jsonTree");
+        //String x=tc.readJSON("jsonTree");
+        //System.out.println(x);
     }
     public static void main()
     {
