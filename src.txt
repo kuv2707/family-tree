@@ -4,13 +4,25 @@ node grandparent
     node parent
     {
         def color=blue;
+        node todo
+        {
+            def todovar=ewrrw;
+        }
+        node bien
+        {
+            def bienvar=wew;
+        }
     }
     node uncle1
     {
         def income=1 chawanni;
     }
-}
-node gp2
-{
-    def what=this is how;
+    node uncle2
+    {
+        def unc2age=32;
+        node cousin
+        {
+            def cousage=12;
+        }
+    }
 }

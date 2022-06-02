@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=treeCreator
+comment1.params=
+comment1.target=java.lang.String\ tok()
+comment2.params=srcFilePath
+comment2.target=treeCreator(java.lang.String)
+comment3.params=s
+comment3.target=void\ log(java.lang.String)
+comment4.params=n\ stt
+comment4.target=void\ readVariable(Node,\ java.util.StringTokenizer)
+comment5.params=n
+comment5.target=void\ scanChildren(Node)
+comment6.params=name
+comment6.target=Node\ getNodeByName(java.lang.String)
+numComments=7

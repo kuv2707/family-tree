@@ -1,11 +1,22 @@
 #BlueJ class context
 comment0.target=Node
-comment1.params=name\ gen
-comment1.target=Node(java.lang.String,\ int)
+comment1.params=name\ gen\ g
+comment1.target=Node(java.lang.String,\ int,\ treeCreator)
 comment2.params=
 comment2.target=java.lang.String\ toString()
 comment3.params=
 comment3.target=java.lang.String\ getName()
-comment4.params=space
-comment4.target=void\ deepPrint(java.lang.String)
-numComments=5
+comment4.params=n
+comment4.target=void\ setChild(Node)
+comment5.params=name
+comment5.target=Node\ searchInParents(java.lang.String)
+comment5.text=\r\n\ \r\n\ @param\ name\ name\ of\ wanted\ node\r\n\ @return\ starting\ the\ search\ from\ itself,\ it\ returns\ the\ node\ of\ name\ passed\ in\ arg,\ (if\ exists)\ else\ null\r\n
+comment6.params=name
+comment6.target=Node\ searchChild(java.lang.String)
+comment7.params=space
+comment7.target=void\ deepPrint(java.lang.String)
+comment8.params=key
+comment8.target=java.lang.String\ getVariable(java.lang.String)
+comment9.params=space\ in
+comment9.target=void\ menu(java.lang.String,\ java.util.Scanner)
+numComments=10

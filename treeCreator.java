@@ -26,7 +26,7 @@ class treeCreator
         catch(Exception e){}
         document+="}";
         st=new StringTokenizer(document," \t\n");
-        root=new Node("$ROOT",-1);
+        root=new Node("$ROOT",-1,this);
         scanChildren(root);
         //root=root.childList.get(0);
     }
@@ -34,19 +34,22 @@ class treeCreator
     {
         //System.out.println(s);
     }
-    public void readVariable(Node n)
+    public void readVariable(Node n,StringTokenizer stt)
     {
         String line="";
-        while(true)
+        while(stt.hasMoreTokens())
         {
-            line+=tok();
+            line+=stt.nextToken();
             if(line.charAt(line.length()-1)==';')
-            break;
+            {
+                line=line.substring(0, line.length()-1);
+                break;
+            }
         }
         log(n.name+" variable found is "+line);
         int eq=line.indexOf("=");
         String key=line.substring(0,eq);
-        String value=line.substring(eq+1,line.length()-1);
+        String value=line.substring(eq+1,line.length());
         n.instanceVariables.put(key,value);
     }
     public void scanChildren(Node n)
@@ -60,7 +63,7 @@ class treeCreator
                 case "node":
                 {
                     String name=tok();
-                    Node child=new Node(name,n.generation+1);
+                    Node child=new Node(name,n.generation+1,this);
                     allNodes.add(child);
                     n.setChild(child);
                     if(tok().equals("{"))
@@ -78,10 +81,22 @@ class treeCreator
                 }
                 case "def":
                 {
-                    readVariable(n);
+                    readVariable(n,st);
                     break;
                 }
+                default:
+                    System.out.println("Unknown: "+token);
+                    break;
             }
         }
+    }
+    Node getNodeByName(String name)
+    {
+        for(Node n:allNodes)
+        {
+            if(n.name.equals(name))
+            return n;
+        }
+        return null;
     }
 }
