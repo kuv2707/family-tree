@@ -1,29 +1,28 @@
-node grandparent
+node dada
 {
-    def age=67;
-    def illness=greed;
-    node parent
+    def job=retired;
+    def age=infinite;
+    node uncle
     {
-        def color=blue;
-        node todo
+        def joblessness=yes_very_much;
+        node chintu
         {
-            def todovar=ewrrw;
-        }
-        node bien
-        {
-            def bienvar=wew;
+            def coder?=yes;
+            def gf=bad_gurl;
+            node chintubaby
+            {
+                def weight=16541654948944899;
+                def age=6;
+                node chintubaby_baby
+                {
+                    def birthyear=2022;
+                }
+            }
         }
     }
-    node uncle1
+    node chaccha
     {
-        def income=1 chawanni;
-    }
-    node uncle2
-    {
-        def unc2age=32;
-        node cousin
-        {
-            def cousage=12;
-        }
+        def paan=always_in_mouth;
+        def lawra=null;
     }
 }

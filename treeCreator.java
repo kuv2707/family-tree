@@ -26,15 +26,15 @@ class treeCreator
         catch(Exception e){}
         document+="}";
         st=new StringTokenizer(document," \t\n");
-        root=new Node("$ROOT",-1,this);
+        root=new Node("$ROOT$",-1,this);
         scanChildren(root);
         //root=root.childList.get(0);
     }
     public void log(String s)
     {
-        //System.out.println(s);
+        System.err.println(s);
     }
-    public void readVariable(Node n,StringTokenizer stt)
+    public void readVariable(Node n,StringTokenizer stt,String assigner)
     {
         String line="";
         while(stt.hasMoreTokens())
@@ -46,10 +46,11 @@ class treeCreator
                 break;
             }
         }
-        log(n.name+" variable found is "+line);
-        int eq=line.indexOf("=");
+        
+        int eq=line.indexOf(assigner);
         String key=line.substring(0,eq);
-        String value=line.substring(eq+1,line.length());
+        String value=line.substring(eq+assigner.length(),line.length());
+        log("Adding to "+n.name+" key="+key+" value="+value);
         n.instanceVariables.put(key,value);
     }
     public void scanChildren(Node n)
@@ -81,7 +82,7 @@ class treeCreator
                 }
                 case "def":
                 {
-                    readVariable(n,st);
+                    readVariable(n,st,"=");
                     break;
                 }
                 default:

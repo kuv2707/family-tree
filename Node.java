@@ -1,4 +1,6 @@
 import java.util.*;
+import java.io.*;
+
 class Node
 {
     static final String ONETAB="    ";
@@ -93,7 +95,7 @@ class Node
         else
         {
             p=searchInParents(wrd);
-            System.out.println(p);
+            //System.out.println(p);
             if(p==null)
             return null;
             while(dott.hasMoreTokens())
@@ -107,13 +109,13 @@ class Node
                 p=p.searchChild(obj);
             }
         }
-        System.out.println(p.toString());
+        //System.out.println(p.toString());
         return p==null?null:(String)p.instanceVariables.getOrDefault(varName,null);
     }
-    public void menu(String space,Scanner in)
+    public boolean menu(String space,Scanner in)
     {
         System.out.println(space+"Entering "+getName());
-        while(true)
+        OUT:while(true)
         {
             System.out.print(space+">");
             String command=in.nextLine().trim();
@@ -123,11 +125,20 @@ class Node
             while(toks.hasMoreTokens())
             {
                 String t=toks.nextToken();
+                
                 switch(t)
                 {
-                    case "def":
+                    case "define":
                     {
-                        god.readVariable(this,toks);
+                        defineVariable(toks);
+                        break;
+                    }
+                    case "declare":
+                    {
+                        //add a node of specified name to childList of current node
+                        Node n=new Node(toks.nextToken(),generation+1,god);
+                        god.allNodes.add(n);
+                        setChild(n);
                         break;
                     }
                     case "enter":
@@ -135,17 +146,52 @@ class Node
                         String name=toks.nextToken();
                         Node n=god.getNodeByName(name);
                         if(n!=null)
-                        n.menu(space+ONETAB,in);
+                        {
+                            int gendiff=n.generation-generation;
+                            String tabb="";
+                            while(gendiff-->0)
+                            tabb+=ONETAB;
+                            boolean res=n.menu(space+tabb,in);
+                            if(!res)
+                            return false;
+                        }
                         else
                         System.out.println(space+"No such node found");
                         break;
                     }
+                    case "exit":
+                    {
+                        
+                        return true;
+                    }
+                    case "XX":
+                    {
+                        return false;
+                    }
+                    case "printself":
+                    {
+                        deepPrint(space);
+                        break;
+                    }
+                    case "save":
+                    {
+                        try(PrintWriter pw=new PrintWriter(new BufferedWriter(new FileWriter(driver.SRC_PATH))))
+                        {
+                            if(god.root.childList.size()>0)
+                            god.root.childList.get(0).save(pw,"");
+                        }
+                        catch(IOException e)
+                        {
+                            System.err.println("Couldn't save");
+                        }
+                        break;
+                    }
                     default:
                     {
-                        //functions and variables
+                        //functions
                         if(t.charAt(0)=='&')
                         {
-                            System.out.println("Searching variable "+t+" in "+instanceVariables.toString());
+                            //System.out.println("Searching variable "+t+" in "+instanceVariables.toString());
                             String s=getVariable(t.substring(1));
                             System.out.println(space+s);
                         }
@@ -162,5 +208,24 @@ class Node
             }
         }
         System.out.println(space+"Leaving "+getName());
+        return true;
+    }
+    public void defineVariable(StringTokenizer toks)
+    {
+        god.readVariable(this,toks,"as");
+    }
+    public void save(PrintWriter pw,String space)
+    {
+        pw.println(space+"node "+name);
+        pw.println(space+"{");
+        instanceVariables.entrySet().forEach(entry->
+        {
+            pw.println(space+ONETAB+"def "+entry.getKey()+"="+entry.getValue()+";");
+        });
+        for(Node n:childList)
+        {
+            n.save(pw,space+ONETAB);
+        }
+        pw.println(space+"}");
     }
 }
