@@ -34,7 +34,14 @@ class treeCreator
     {
         System.err.println(s);
     }
-    public void readVariable(Node n,StringTokenizer stt,String assigner)
+    /**
+     * 
+     * @param n Node to read variable into
+     * @param stt StringTokenizer object from which to read variable
+     * @param assigner keyword used to indicate that value is assigned to key  (like in int a=6, = is assigner)
+     * @return String array containing the added key and value
+     */
+    public String[] readVariable(Node n,StringTokenizer stt,String assigner)
     {
         String line="";
         while(stt.hasMoreTokens())
@@ -50,15 +57,21 @@ class treeCreator
         int eq=line.indexOf(assigner);
         String key=line.substring(0,eq);
         String value=line.substring(eq+assigner.length(),line.length());
-        log("Adding to "+n.name+" key="+key+" value="+value);
+        if(value.charAt(0)=='&')
+        {
+            //variable is not a value, but a reference to it
+            value=n.getVariableFromAddress(value.substring(1));
+        }
+        //log("Adding to "+n.name+" key="+key+" value="+value);
         n.instanceVariables.put(key,value);
+        return new String[]{key,value};
     }
     public void scanChildren(Node n)
     {
         while(true)
         {
             String token=tok();
-            log("processing "+token);
+            //log("processing "+token);
             switch(token)
             {
                 case "node":
@@ -125,11 +138,11 @@ class treeCreator
             json(root,"",pw);
             pw.print("\n}");
             pw.flush();
-            System.out.println("File created with name "+name+".json");
+            System.err.println("File created with name "+name+".json");
         }
         catch(Exception e)
         {
-            System.out.println("File creation failed "+e.getMessage());
+            System.err.println("File creation failed "+e.getMessage());
         }
     }
     static final String DQ="\"",ONETAB="    ";
@@ -139,7 +152,7 @@ class treeCreator
         p.print(space+"{\n");
         
         int k=0;
-        for(Map.Entry<String,Object> s:n.instanceVariables.entrySet())
+        for(Map.Entry<String,String> s:n.instanceVariables.entrySet())
         {
             k++;
             if(k!=n.instanceVariables.size())

@@ -7,7 +7,8 @@ comment2.target=treeCreator(java.lang.String)
 comment3.params=s
 comment3.target=void\ log(java.lang.String)
 comment4.params=n\ stt\ assigner
-comment4.target=void\ readVariable(Node,\ java.util.StringTokenizer,\ java.lang.String)
+comment4.target=java.lang.String[]\ readVariable(Node,\ java.util.StringTokenizer,\ java.lang.String)
+comment4.text=\r\n\ \r\n\ @param\ n\ Node\ to\ read\ variable\ into\r\n\ @param\ stt\ StringTokenizer\ object\ from\ which\ to\ read\ variable\r\n\ @param\ assigner\ keyword\ used\ to\ indicate\ that\ value\ is\ assigned\ to\ key\ \ (like\ in\ int\ a\=6,\ \=\ is\ assigner)\r\n\ @return\ String\ array\ containing\ the\ added\ key\ and\ value\r\n
 comment5.params=n
 comment5.target=void\ scanChildren(Node)
 comment6.params=name

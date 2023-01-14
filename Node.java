@@ -5,9 +5,9 @@ class Node
 {
     static final String ONETAB="    ";
     ArrayList<Node> childList=new ArrayList<Node>();
-    HashMap<String,Object> instanceVariables=new HashMap<String,Object>();
+    HashMap<String,String> instanceVariables=new HashMap<String,String>();
     String name;
-    Node conjugate;
+    Node conjugate;//to implement
     int generation;
     Node immediateParent=null;
     treeCreator god;
@@ -20,7 +20,7 @@ class Node
     @Override
     public String toString()
     {
-        return "<node name="+name+">";
+        return "<node "+name+">";
     }
     String getName()
     {
@@ -31,6 +31,7 @@ class Node
         //n has to be a child of this node
         this.childList.add(n);
         n.immediateParent=this;
+        n.generation=generation+1;
     }
     /**
      * 
@@ -70,7 +71,7 @@ class Node
     public void deepPrint(String space)
     {
         System.out.print(space+"<"+getName());
-        for(Map.Entry<String,Object> s:instanceVariables.entrySet())
+        for(Map.Entry<String,String> s:instanceVariables.entrySet())
         {
             System.out.print(" "+" "+s.getKey()+"="+s.getValue());
         }
@@ -81,41 +82,40 @@ class Node
         }
         System.out.println(space+"</"+getName()+">");
     }
-    public String getVariable(String key)
+    public String getVariableFromAddress(String key)//doesnt include the prefix &
     {
-        String varName=key.substring(key.lastIndexOf(".")+1);
+        if(!key.contains("."))
+        return instanceVariables.get(key);
         
-        StringTokenizer dott=new StringTokenizer(key,".");
-        Node p=null;
-        String wrd=dott.nextToken();
-        if(wrd.equals(varName))
+        ArrayList<String> treePath=new ArrayList<String>();
+        String noden="";
+        key+=".";
+        for(int i=0;i<key.length();i++)
         {
-            p=this;
-        }
-        else
-        {
-            p=searchInParents(wrd);
-            //System.out.println(p);
-            if(p==null)
-            return null;
-            while(dott.hasMoreTokens())
+            if(key.charAt(i)=='.')
             {
-                String obj=dott.nextToken();
-                if(obj.equals(varName))
-                break;
-                if(p==null)
-                return null;
-                else
-                p=p.searchChild(obj);
+                treePath.add(noden);
+                noden="";
             }
+            else
+            noden+=key.charAt(i);
         }
-        //System.out.println(p.toString());
-        return p==null?null:(String)p.instanceVariables.getOrDefault(varName,null);
+        Node fin=god.getNodeByName(treePath.get(0));
+        for(int i=1;i<treePath.size()-1;i++)
+        {
+            Node ch=fin.searchChild(treePath.get(i));
+            if(ch==null)
+            return null;
+            fin=ch;
+        }
+        
+
+        return fin.instanceVariables.get(treePath.get(treePath.size()-1));
     }
     public boolean menu(String space,Scanner in)
     {
-        System.out.println(space+"Entering "+getName());
-        OUT:while(true)
+        System.out.println(space+"Entering node "+getName());
+        while(true)
         {
             System.out.print(space+">");
             String command=in.nextLine().trim();
@@ -130,21 +130,24 @@ class Node
                 {
                     case "define":
                     {
-                        defineVariable(toks);
+                        String[] assig=god.readVariable(this,toks,"as");
+                        System.out.println(space+"defined "+assig[0]+" as "+assig[1]);
                         break;
                     }
-                    case "declare":
+                    case "insert":
                     {
                         //add a node of specified name to childList of current node
-                        Node n=new Node(toks.nextToken(),generation+1,god);
+                        String name=toks.nextToken();
+                        Node n=new Node(name,generation+1,god);
                         god.allNodes.add(n);
                         setChild(n);
+                        System.out.println(space+" inserted node "+name+" as a child of "+getName());
                         break;
                     }
                     case "enter":
                     {
                         String name=toks.nextToken();
-                        Node n=god.getNodeByName(name);
+                        Node n=searchChild(name);
                         if(n!=null)
                         {
                             int gendiff=n.generation-generation;
@@ -158,11 +161,6 @@ class Node
                         else
                         System.out.println(space+"No such node found");
                         break;
-                    }
-                    case "exit":
-                    {
-                        
-                        return true;
                     }
                     case "XX":
                     {
@@ -192,7 +190,7 @@ class Node
                         if(t.charAt(0)=='&')
                         {
                             //System.out.println("Searching variable "+t+" in "+instanceVariables.toString());
-                            String s=getVariable(t.substring(1));
+                            String s=getVariableFromAddress(t.substring(1));
                             System.out.println(space+s);
                         }
                         else
@@ -209,10 +207,6 @@ class Node
         }
         System.out.println(space+"Leaving "+getName());
         return true;
-    }
-    public void defineVariable(StringTokenizer toks)
-    {
-        god.readVariable(this,toks,"as");
     }
     public void save(PrintWriter pw,String space)
     {

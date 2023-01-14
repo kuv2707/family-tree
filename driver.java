@@ -2,9 +2,13 @@ import java.util.Scanner;
 
 public class driver 
 {
-    static final String SRC_PATH="src.txt";
+    static String SRC_PATH;
     public static void main(String[] args)
     {
+        if(args!=null && args.length>0)
+        SRC_PATH=args[0];
+        else
+        SRC_PATH="src.txt";
         treeCreator tc=new treeCreator(SRC_PATH);
         tc.root.deepPrint("");
         Scanner in=new Scanner(System.in);
@@ -16,6 +20,6 @@ public class driver
     }
     public static void main()
     {
-        main(null);
+        main(new String[]{"src.txt"});
     }
 }

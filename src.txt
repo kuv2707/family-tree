@@ -9,6 +9,7 @@ node dada
         {
             def coder?=yes;
             def gf=bad_gurl;
+            def height=55;
             node chintubaby
             {
                 def weight=16541654948944899;
@@ -19,10 +20,23 @@ node dada
                 }
             }
         }
+        node chinti
+        {
+            def married_to=randy;
+        }
     }
     node chaccha
     {
         def paan=always_in_mouth;
         def lawra=null;
+        node villagecousin
+        {
+            def money=much;
+            def gf=kaha_se?;
+            def height=55;
+            node laterine
+            {
+            }
+        }
     }
 }
