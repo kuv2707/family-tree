@@ -33,6 +33,11 @@ class Node
         n.immediateParent=this;
         n.generation=generation+1;
     }
+    void removeChild(Node n)
+    {
+        this.childList.remove(n);
+        god.allNodes.remove(n);
+    }
     /**
      * 
      * @param name name of wanted node
@@ -73,7 +78,7 @@ class Node
         System.out.print(space+"<"+getName());
         for(Map.Entry<String,String> s:instanceVariables.entrySet())
         {
-            System.out.print(" "+" "+s.getKey()+"="+s.getValue());
+            System.out.print(" "+" "+s.getKey()+"=\""+s.getValue()+"\"");
         }
         System.out.println(">");
         for(Node n:childList)
@@ -134,6 +139,13 @@ class Node
                         System.out.println(space+"defined "+assig[0]+" as "+assig[1]);
                         break;
                     }
+                    case "undefine":
+                    {
+                        String varname=toks.nextToken();
+                        instanceVariables.remove(varname);
+                        System.out.println(space+varname+" is no longer defined in "+getName());
+                        break;
+                    }
                     case "insert":
                     {
                         //add a node of specified name to childList of current node
@@ -144,6 +156,23 @@ class Node
                         System.out.println(space+" inserted node "+name+" as a child of "+getName());
                         break;
                     }
+                    case "fuck":
+                    {
+                        //add a node of specified name to childList of current node
+                        String name=toks.nextToken();
+                        
+                        Node n=searchChild(name);
+                        if(n==null)
+                        System.out.println(space+name+" is already absent");
+                        else
+                        {
+                            removeChild(n);
+                            System.out.println(space+name+" is removed from "+getName());
+                        }
+                        
+                        break;
+                    }
+                
                     case "enter":
                     {
                         String name=toks.nextToken();
@@ -162,10 +191,11 @@ class Node
                         System.out.println(space+"No such node found");
                         break;
                     }
-                    case "XX":
+                    case "fuckoff":
                     {
                         return false;
                     }
+                    //implement delete
                     case "printself":
                     {
                         deepPrint(space);

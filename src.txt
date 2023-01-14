@@ -24,6 +24,10 @@ node dada
         {
             def married_to=randy;
         }
+        node raj
+        {
+            def age=18;
+        }
     }
     node chaccha
     {
