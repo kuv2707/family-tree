@@ -114,7 +114,6 @@ class Node
         while(true)
         {
             String token=st.nextToken();
-            //log("processing "+token);
             switch(token)
             {
                 case "node":
@@ -178,7 +177,12 @@ class Node
         }
         System.out.println(space+"</"+getName()+">");
     }
-    public String getVariableFromAddress(String key)//doesnt include the prefix &
+    /**
+     * 
+     * @param key address of variable, doesnt include the prefix &
+     * @return variable value or null
+     */
+    public String getVariableFromAddress(String key)
     {
         if(!key.contains("."))
         return instanceVariables.get(key);
@@ -204,8 +208,6 @@ class Node
             return null;
             fin=ch;
         }
-        
-
         return fin.instanceVariables.get(treePath.get(treePath.size()-1));
     }
     public boolean menu(String space,Scanner in)
@@ -296,7 +298,6 @@ class Node
                     {
                         return false;
                     }
-                    //implement delete
                     case "printself":
                     {
                         deepPrint(space);
@@ -320,7 +321,6 @@ class Node
                         //functions
                         if(t.charAt(0)=='&')
                         {
-                            //System.out.println("Searching variable "+t+" in "+instanceVariables.toString());
                             String s=getVariableFromAddress(t.substring(1));
                             System.out.println(space+s);
                         }
@@ -328,7 +328,6 @@ class Node
                         {
                             //function call
                             StringTokenizer f=new StringTokenizer(t,"() ,");
-                            //String methodName=f.nextToken();
                             while(f.hasMoreTokens())
                             System.out.println(f.nextToken());
                         }

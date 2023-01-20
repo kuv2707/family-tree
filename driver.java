@@ -1,5 +1,4 @@
 import java.util.Scanner;
-
 public class driver 
 {
     static String SRC_PATH;
