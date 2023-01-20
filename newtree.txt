@@ -4,7 +4,11 @@ node html
     {
         node h1
         {
-            def textContent=hello;
+            content: hello;
+        }
+        node label
+        {
+            content: how are you?;
         }
     }
 }

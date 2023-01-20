@@ -7,7 +7,7 @@ class Node
     ArrayList<Node> childList=new ArrayList<Node>();
     HashMap<String,String> instanceVariables=new HashMap<String,String>();
     String name;
-    Node conjugate;//to implement
+    String content="";
     int generation;
     Node immediateParent=null;
     treeCreator god;
@@ -73,6 +73,95 @@ class Node
         }
         return null;
     }
+    /**
+     * 
+     * @param n Node to read variable into
+     * @param stt StringTokenizer object from which to read variable
+     * @param assigner keyword used to indicate that value is assigned to key  (like in int a=6, = is assigner)
+     * @return String array containing the added key and value
+     */
+    public String[] readVariable(StringTokenizer stt,String assigner)
+    {
+        String line="";
+        while(stt.hasMoreTokens())
+        {
+            line+=stt.nextToken();
+            if(line.charAt(line.length()-1)==';')
+            {
+                line=line.substring(0, line.length()-1);
+                break;
+            }
+        }
+        
+        int eq=line.indexOf(assigner);
+        String key=line.substring(0,eq);
+        String value=line.substring(eq+assigner.length(),line.length());
+        if(value.charAt(0)=='&')
+        {
+            //variable is not a value, but a reference to it
+            value=getVariableFromAddress(value.substring(1));
+        }
+        //log("Adding to "+n.name+" key="+key+" value="+value);
+        instanceVariables.put(key,value);
+        return new String[]{key,value};
+    }
+    public void log(String s)
+    {
+        System.err.println(s);
+    }
+    public void scanChildren(StringTokenizer st)
+    {
+        while(true)
+        {
+            String token=st.nextToken();
+            //log("processing "+token);
+            switch(token)
+            {
+                case "node":
+                {
+                    String name=st.nextToken();
+                    Node child=new Node(name,generation+1,god);
+                    god.allNodes.add(child);
+                    setChild(child);
+                    if(st.nextToken().equals("{"))
+                    child.scanChildren(st);
+                    break;
+                }
+                case "{"://should never be found like this
+                {
+                    log("ERROR in parsing");
+                    break;
+                }
+                case "}":
+                {
+                    return;
+                }
+                case "def":
+                {
+                    readVariable(st,"=");
+                    break;
+                }
+                case "content:":
+                {
+                    String line="";
+                    while(st.hasMoreTokens())
+                    {
+                        line+=st.nextToken();
+                        if(line.charAt(line.length()-1)==';')
+                        {
+                            line=line.substring(0, line.length()-1);
+                            break;
+                        }
+                    }
+                    content=line;
+                    break;
+                }
+                default:
+                    System.out.println("Unknown: "+token);
+                    break;
+            }
+        }
+    }
     public void deepPrint(String space)
     {
         System.out.print(space+"<"+getName());
@@ -81,6 +170,8 @@ class Node
             System.out.print(" "+" "+s.getKey()+"=\""+s.getValue()+"\"");
         }
         System.out.println(">");
+        if(content.length()!=0)
+        System.out.println(space+ONETAB+content);
         for(Node n:childList)
         {
             n.deepPrint(space+ONETAB);
@@ -130,12 +221,11 @@ class Node
             while(toks.hasMoreTokens())
             {
                 String t=toks.nextToken();
-                
                 switch(t)
                 {
                     case "define":
                     {
-                        String[] assig=god.readVariable(this,toks,"as");
+                        String[] assig=readVariable(toks,"as");
                         System.out.println(space+"defined "+assig[0]+" as "+assig[1]);
                         break;
                     }
@@ -144,6 +234,17 @@ class Node
                         String varname=toks.nextToken();
                         instanceVariables.remove(varname);
                         System.out.println(space+varname+" is no longer defined in "+getName());
+                        break;
+                    }
+                    case "content":
+                    {
+                        String cont="";
+                        while(toks.hasMoreTokens())
+                        {
+                            cont+=toks.nextToken();
+                        }
+                        cont=cont.replace("$$",content);
+                        content=cont;
                         break;
                     }
                     case "insert":
@@ -156,7 +257,7 @@ class Node
                         System.out.println(space+" inserted node "+name+" as a child of "+getName());
                         break;
                     }
-                    case "fuck":
+                    case "remove":
                     {
                         //add a node of specified name to childList of current node
                         String name=toks.nextToken();
@@ -191,7 +292,7 @@ class Node
                         System.out.println(space+"No such node found");
                         break;
                     }
-                    case "fuckoff":
+                    case "X":
                     {
                         return false;
                     }
@@ -242,6 +343,8 @@ class Node
     {
         pw.println(space+"node "+name);
         pw.println(space+"{");
+        if(content.length()>0)
+        pw.println(space+ONETAB+"content: "+content+";");
         instanceVariables.entrySet().forEach(entry->
         {
             pw.println(space+ONETAB+"def "+entry.getKey()+"="+entry.getValue()+";");

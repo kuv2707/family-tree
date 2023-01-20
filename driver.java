@@ -13,10 +13,8 @@ public class driver
         tc.root.deepPrint("");
         Scanner in=new Scanner(System.in);
         tc.root.menu("",in);
-        System.out.println("Terminated!");
-        //tc.makeJSON(tc.root,"jsonTree");
-        //String x=tc.readJSON("jsonTree");
-        //System.out.println(x);
+        System.out.println("Program terminated!");
+        
     }
     public static void main()
     {
