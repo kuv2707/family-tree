@@ -1,6 +1,5 @@
 import java.util.*;
 import java.io.*;
-
 class Node
 {
     static final String ONETAB="    ";
@@ -28,7 +27,6 @@ class Node
     }
     void setChild(Node n)
     {
-        //n has to be a child of this node
         this.childList.add(n);
         n.immediateParent=this;
         n.generation=generation+1;
@@ -39,7 +37,6 @@ class Node
         god.allNodes.remove(n);
     }
     /**
-     * 
      * @param name name of wanted node
      * @return starting the search from itself, it returns the node of name passed in arg, (if exists) else null
      */
@@ -76,11 +73,11 @@ class Node
     /**
      * 
      * @param n Node to read variable into
-     * @param stt STokenizer object from which to read variable
+     * @param stt StringTokenizer object from which to read variable
      * @param assigner keyword used to indicate that value is assigned to key  (like in int a=6, = is assigner)
      * @return String array containing the added key and value
      */
-    public String[] readVariable(STokenizer stt,String assigner)
+    public String[] readVariable(StringTokenizer stt,String assigner)
     {
         String line="";
         while(stt.hasMoreTokens())
@@ -96,22 +93,19 @@ class Node
         int eq=line.indexOf(assigner);
         String key=line.substring(0,eq);
         String value=line.substring(eq+assigner.length(),line.length());
+        System.err.println(value);
         if(value.charAt(0)=='&')
         {
-            //variable is not a value, but a reference to it
+            //value is not a value, but a reference to it
             value=getVariableFromAddress(value.substring(1));
         }
         //log("Adding to "+n.name+" key="+key+" value="+value);
         instanceVariables.put(key,value);
         return new String[]{key,value};
     }
-    public void log(String s)
+    public void scanChildren(StringTokenizer st)
     {
-        System.err.println(s);
-    }
-    public void scanChildren(STokenizer st)
-    {
-        while(true)
+        while(st.hasMoreTokens())
         {
             String token=st.nextToken();
             switch(token)
@@ -128,7 +122,7 @@ class Node
                 }
                 case "{"://should never be found like this
                 {
-                    log("ERROR in parsing");
+                    System.err.println("ERROR in parsing");
                     break;
                 }
                 case "}":
@@ -143,6 +137,7 @@ class Node
                 case "content:":
                 {
                     String line="";
+                    //TODO:this piece of code has been repeated 3 times
                     while(st.hasMoreTokens())
                     {
                         line+=st.nextToken();
@@ -166,7 +161,7 @@ class Node
         System.out.print(space+"<"+getName());
         for(Map.Entry<String,String> s:instanceVariables.entrySet())
         {
-            System.out.print(" "+" "+s.getKey()+"=\""+s.getValue()+"\"");
+            System.out.print(" "+s.getKey()+"=\""+s.getValue()+"\"");
         }
         System.out.println(">");
         if(content.length()!=0)
@@ -219,7 +214,7 @@ class Node
             String command=in.nextLine().trim();
             if(command.equals("return"))
             break;
-            STokenizer toks=new STokenizer(command," ");
+            StringTokenizer toks=new StringTokenizer(command," ");
             while(toks.hasMoreTokens())
             {
                 String t=toks.nextToken();
@@ -234,19 +229,24 @@ class Node
                     case "undefine":
                     {
                         String varname=toks.nextToken();
-                        instanceVariables.remove(varname);
+                        
+                        instanceVariables.remove(varname.trim());
                         System.out.println(space+varname+" is no longer defined in "+getName());
                         break;
                     }
-                    case "content":
+                    case "content:":
                     {
-                        String cont="";
+                        String line="";
                         while(toks.hasMoreTokens())
                         {
-                            cont+=toks.nextToken();
+                            line+=toks.nextToken()+" ";
+                            if(line.charAt(line.length()-1)==';')
+                            {
+                                line=line.substring(0, line.length()-1);
+                                break;
+                            }
                         }
-                        cont=cont.replace("$$",content);
-                        content=cont;
+                        content=line;
                         break;
                     }
                     case "insert":
@@ -272,10 +272,8 @@ class Node
                             removeChild(n);
                             System.out.println(space+name+" is removed from "+getName());
                         }
-                        
                         break;
                     }
-                
                     case "enter":
                     {
                         String name=toks.nextToken();
@@ -314,11 +312,11 @@ class Node
                         {
                             System.err.println("Couldn't save");
                         }
+                        System.out.println(space+"Changes saved successfully!");
                         break;
                     }
                     default:
                     {
-                        //functions
                         if(t.charAt(0)=='&')
                         {
                             String s=getVariableFromAddress(t.substring(1));
@@ -326,8 +324,8 @@ class Node
                         }
                         else
                         {
-                            //function call
-                            STokenizer f=new STokenizer(t,"() ,");
+                            //TODO: function call
+                            StringTokenizer f=new StringTokenizer(t,"() ,");
                             while(f.hasMoreTokens())
                             System.out.println(f.nextToken());
                         }

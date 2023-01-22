@@ -20,7 +20,7 @@ class treeCreator
         }
         catch(Exception e){}
         document+="}";
-        STokenizer st=new STokenizer(document," \t\n");
+        StringTokenizer st=new StringTokenizer(document," \t\n");
         root=new Node("$ROOT$",-1,this);
         root.scanChildren(st);
         //root=root.childList.get(0);

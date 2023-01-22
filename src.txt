@@ -48,11 +48,8 @@ node dada
                 def consistency=liquid;
                 node sussu
                 {
-                    def content=high_urea;
-                    node vomit
-                    {
-                        def eww=eww;
-                    }
+                    content: thisispiss;
+                    def composition=high_urea;
                 }
             }
         }
