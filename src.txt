@@ -4,7 +4,7 @@ node dada
     def age=infinite;
     node uncle
     {
-        def joblessness=yes_very_much;
+        def job=pochawala;
         node chintu
         {
             def coder?=yes;
@@ -36,6 +36,7 @@ node dada
     node chaccha
     {
         def paan=always_in_mouth;
+        def age=5432542;
         node villagecousin
         {
             def money=much;
@@ -54,6 +55,9 @@ node dada
                     }
                 }
             }
+        }
+        node chaccha_ka_baccha
+        {
         }
     }
 }

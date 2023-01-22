@@ -12,7 +12,7 @@ class treeCreator
             
             BufferedReader br=new BufferedReader(fr);
             String s="";
-            //boolean ignore=false;
+            //implement comments
             while((s=br.readLine())!=null)
             {
                 document+=s+"\n";
@@ -20,7 +20,7 @@ class treeCreator
         }
         catch(Exception e){}
         document+="}";
-        StringTokenizer st=new StringTokenizer(document," \t\n");
+        STokenizer st=new STokenizer(document," \t\n");
         root=new Node("$ROOT$",-1,this);
         root.scanChildren(st);
         //root=root.childList.get(0);

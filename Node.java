@@ -76,11 +76,11 @@ class Node
     /**
      * 
      * @param n Node to read variable into
-     * @param stt StringTokenizer object from which to read variable
+     * @param stt STokenizer object from which to read variable
      * @param assigner keyword used to indicate that value is assigned to key  (like in int a=6, = is assigner)
      * @return String array containing the added key and value
      */
-    public String[] readVariable(StringTokenizer stt,String assigner)
+    public String[] readVariable(STokenizer stt,String assigner)
     {
         String line="";
         while(stt.hasMoreTokens())
@@ -109,7 +109,7 @@ class Node
     {
         System.err.println(s);
     }
-    public void scanChildren(StringTokenizer st)
+    public void scanChildren(STokenizer st)
     {
         while(true)
         {
@@ -219,7 +219,7 @@ class Node
             String command=in.nextLine().trim();
             if(command.equals("return"))
             break;
-            StringTokenizer toks=new StringTokenizer(command," ");
+            STokenizer toks=new STokenizer(command," ");
             while(toks.hasMoreTokens())
             {
                 String t=toks.nextToken();
@@ -327,7 +327,7 @@ class Node
                         else
                         {
                             //function call
-                            StringTokenizer f=new StringTokenizer(t,"() ,");
+                            STokenizer f=new STokenizer(t,"() ,");
                             while(f.hasMoreTokens())
                             System.out.println(f.nextToken());
                         }
