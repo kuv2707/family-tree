@@ -1,60 +1,78 @@
-node dada
+node person
 {
-    def job=retired;
-    def age=infinite;
-    node uncle
+    def occupation=retired;
+    def age=eternal;
+    node relative
     {
-        def job=pochawala;
-        node chintu
+        def occupation=shopkeeper;
+        node nephew
         {
-            def coder?=yes;
-            def gf=bad_gurl;
+            def is_programmer=yes;
+            def partner=kind_person;
             def height=55;
-            node chintubaby
+            node nephew_child
             {
-                def weight=16541654948944899;
+                def weight=normal;
                 def age=6;
-                node chintubaby_baby
+                node nephew_grandchild
                 {
                     def birthyear=2022;
                 }
             }
         }
-        node chinti
+        node niece
         {
-            def married_to=randy;
+            def marital_status=retired;
         }
-        node raj
+        node friend
         {
-            def umar=432;
-            node rajson
+            def age=ageless;
+            node friend_child
             {
-                def age=-56;
+                def age=56;
             }
         }
     }
-    node chaccha
+    node uncle
     {
-        def paan=always_in_mouth;
-        def age=5432542;
-        node villagecousin
+        def habit=always_smoking;
+        def age=ageless;
+        node village_cousin
         {
-            def money=much;
-            def gf=kaha_se?;
+            def savings=plenty;
+            def partner=from_where?;
             def height=55;
-            node laterine
+            node restroom
             {
-                content: diarrhoea;
-                def consistency=liquid;
-                node sussu
+                content: cleanliness;
+                def flush=occasionally;
+                def texture=liquid;
+                node toilet
                 {
-                    content: thisispiss;
-                    def composition=high_urea;
+                    content: normal_urine;
+                    def composition=normal;
+                    node friend
+                    {
+                        def favorite_food=dosa;
+                        node dirt
+                        {
+                            content: nothing_else_to_mention;
+                            def messiness=yuck;
+                        }
+                    }
                 }
             }
         }
-        node chaccha_ka_baccha
+        node uncle's_child
         {
+            node pet
+            {
+                def status=unique_pet;
+            }
         }
+    }
+    node aunt
+    {
+        def relationship_status=perpetually_single;
     }
 }

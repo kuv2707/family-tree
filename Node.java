@@ -1,3 +1,7 @@
+/**
+ * TODO: implement a Promise based architecture for variables
+ * a.b.x for everything: classes, variables ...
+ */
 import java.util.*;
 import java.io.*;
 class Node
@@ -77,7 +81,7 @@ class Node
      * @param assigner keyword used to indicate that value is assigned to key  (like in int a=6, = is assigner)
      * @return String array containing the added key and value
      */
-    public String[] readVariable(StringTokenizer stt,String assigner)
+    public String[] readVariable(StringTokenizer stt,String assigner)throws StringIndexOutOfBoundsException
     {
         String line="";
         while(stt.hasMoreTokens())
@@ -93,13 +97,12 @@ class Node
         int eq=line.indexOf(assigner);
         String key=line.substring(0,eq);
         String value=line.substring(eq+assigner.length(),line.length());
-        System.err.println(value);
         if(value.charAt(0)=='&')
         {
             //value is not a value, but a reference to it
             value=getVariableFromAddress(value.substring(1));
         }
-        //log("Adding to "+n.name+" key="+key+" value="+value);
+        System.err.println(name+"."+key+"="+value);
         instanceVariables.put(key,value);
         return new String[]{key,value};
     }
@@ -118,11 +121,6 @@ class Node
                     setChild(child);
                     if(st.nextToken().equals("{"))
                     child.scanChildren(st);
-                    break;
-                }
-                case "{"://should never be found like this
-                {
-                    System.err.println("ERROR in parsing");
                     break;
                 }
                 case "}":
@@ -151,13 +149,14 @@ class Node
                     break;
                 }
                 default:
-                    System.out.println("Unknown: "+token);
+                    System.out.println("Unknown token: "+token);
                     break;
             }
         }
     }
     public void deepPrint(String space)
     {
+        
         System.out.print(space+"<"+getName());
         for(Map.Entry<String,String> s:instanceVariables.entrySet())
         {
@@ -171,6 +170,15 @@ class Node
             n.deepPrint(space+ONETAB);
         }
         System.out.println(space+"</"+getName()+">");
+        
+        /*
+         * 
+         System.out.println(space+name);
+         for(Node n:childList)
+         {
+             n.deepPrint(space.replace("-"," ")+"|"+ONETAB.replace(" ","-"));
+         }
+         */
     }
     /**
      * 
@@ -207,7 +215,7 @@ class Node
     }
     public boolean menu(String space,Scanner in)
     {
-        System.out.println(space+"Entering node "+getName());
+        System.out.println(space+"You are now in: "+getName());
         while(true)
         {
             System.out.print(space+">");
@@ -222,16 +230,27 @@ class Node
                 {
                     case "define":
                     {
-                        String[] assig=readVariable(toks,"as");
-                        System.out.println(space+"defined "+assig[0]+" as "+assig[1]);
+                        try
+                        {
+                            String[] assig=readVariable(toks,"as");
+                            System.out.println(space+"defined "+assig[0]+" as "+assig[1]);
+                        }
+                        catch(StringIndexOutOfBoundsException e)
+                        {
+                            System.out.println(space+" invalid command");
+                        }
                         break;
                     }
                     case "undefine":
                     {
                         String varname=toks.nextToken();
                         
-                        instanceVariables.remove(varname.trim());
-                        System.out.println(space+varname+" is no longer defined in "+getName());
+                        String val=instanceVariables.get(varname);
+                        if(val==null)
+                        System.out.println(space+varname+" is already undefined in "+getName());
+                        else
+                        System.out.println(space+"{"+varname+":"+val+"} is no longer defined in "+getName());
+                        instanceVariables.remove(varname);
                         break;
                     }
                     case "content:":
@@ -317,17 +336,21 @@ class Node
                     }
                     default:
                     {
-                        if(t.charAt(0)=='&')
+                        if(t.charAt(0)=='*')
                         {
                             String s=getVariableFromAddress(t.substring(1));
+                            if(s==null)
+                            System.out.println(space+"<<undefined>>");
+                            else
                             System.out.println(space+s);
                         }
                         else
                         {
                             //TODO: function call
-                            StringTokenizer f=new StringTokenizer(t,"() ,");
-                            while(f.hasMoreTokens())
-                            System.out.println(f.nextToken());
+                            System.out.println(space+" invalid command");
+                            //StringTokenizer f=new StringTokenizer(t,"() ,");
+                            //while(f.hasMoreTokens())
+                            //System.out.println(f.nextToken());
                         }
                     }
                 }

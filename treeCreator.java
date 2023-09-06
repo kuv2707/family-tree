@@ -21,7 +21,7 @@ class treeCreator
         catch(Exception e){}
         document+="}";
         StringTokenizer st=new StringTokenizer(document," \t\n");
-        root=new Node("$ROOT$",-1,this);
+        root=new Node("<<ROOT>>",-1,this);
         root.scanChildren(st);
         //root=root.childList.get(0);
     }
