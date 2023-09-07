@@ -40,4 +40,4 @@ terminate the program
 
 
 # How to run 
-execute driver.java, passing the tree file as a command line argument
+execute driver.java, passing the tree source file as a command line argument. If the tree source file is not specified, it defaults to src.txt.
